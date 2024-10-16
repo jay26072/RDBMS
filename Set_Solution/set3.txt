@@ -1,0 +1,209 @@
+/* Create salesman TABLE */
+
+CREATE TABLE Salesmen(
+    snum INT NOT NULL primary key, 
+    sname varchar2(25), 
+    city varchar2(25), 
+    commission float
+    );
+
+//
+
+/* Create Customers TABLE */
+
+
+CREATE TABLE Customers(
+    cnum int Primary Key, 
+    cname varchar2(25), 
+    city varchar2(25), 
+    rating INT,
+    snum INT, 
+    FOREIGN KEY (snum) REFERENCES Salesmen(snum)
+    ON DELETE CASCADE
+    );
+
+//
+
+/* Create Order Table */
+
+CREATE TABLE Orders(
+    onum INT primary key, 
+    amount float, 
+    odate DATE, 
+    cnum INT,
+    snum INT,
+    FOREIGN KEY (snum) REFERENCES Salesmen(snum),
+    FOREIGN KEY (cnum) REFERENCES Customers(cnum)
+    ON DELETE CASCADE
+    );
+
+//
+
+//
+
+1.
+insert into Salesmen values(&snum,'&sname','&city',&commission);
+
+insert into Customers values(&cnum,'&cname','&city',&rating,&snum);
+
+insert into Orders values(&onum,&amt,&odate,&cnum,&snum);
+
+2.
+select onum,amount,odate from Orders;
+
+3.
+SELECT * FROM customers where snum=101;
+
+4.
+select city,snum,sname,commission from Salesmen;
+
+5.
+SELECT rating||' '||cname "employee rating"
+FROM customers
+WHERE city='Surat';
+
+6.
+SELECT DISTINCT snum, onum FROM Orders ORDER BY snum;
+
+7.
+select * from orders where amount>1000;
+
+8.
+SELECT sname, city FROM salesmen WHERE city='London' AND commission >.10;
+
+9.
+select cname from Customers where cname like 'C%';
+
+10.
+select cname from Customers WHERE cname >= 'A' AND cname <= 'G';	
+
+11.
+select * from Orders where amount=0 || NULL;
+
+12.
+select MAX(amount) from Orders where snum=101 OR snum=106;
+
+13.
+select * from Orders where odate='03-OCT-2023';
+
+14.
+select SUM(amount) from Orders;
+
+15.
+select AVG(amount) from Orders;
+
+16.
+select * from Orders where amount IS NOT NULL;
+
+17.
+select sname,commission from Salesmen;
+
+18.
+SELECT onum, snum, amount, (amount*15)/100 commission FROM orders;
+
+19.
+select city, MAX(rating) from Customers Group By city;
+
+20.
+select rating from Customers order by rating desc;
+
+21.
+SELECT 'For ', odate, ' there are ', COUNT(*), ' orders' FROM Orders GROUP BY odate ORDER BY odate DESC;
+
+22.
+select c.cname,s.sname from customers c join salesmen s on s.snum=c.snum;
+
+23.
+select c.cname,s.sname from customers c join salesmen s on s.snum=c.snum where s.city=c.city;
+
+24.
+select c.cname,s.sname from customers c inner join orders o on c.cnum=o.cnum inner join Salesmen s on o.snum=s.snum;
+
+25.
+select c.cname,s.sname from customers c inner join orders o on c.cnum=o.cnum inner join Salesmen s on o.snum=s.snum where s.city<>c.city;
+
+26.
+select c.cname,s.sname from customers c inner join Salesmen s on c.snum=s.snum where s.commission >= 0.15;
+
+27.
+select amount, commission FROM salesmen JOIN customers using(snum) JOIN orders using(snum) WHERE rating>100;
+
+28.
+Select a.cname, b.cname,a.rating from cust a, cust b where a.rating = b.rating and a.cnum != b.cnum
+
+29.
+Select * from orders where amount > ( select avg(amount) from orders where odate='04-OCT-23');
+
+30.
+select AVG(commission) from Salesmen where city='London';
+
+31.
+select o.onum,o.amount,o.snum,s.city from orders o join salesmen s on o.snum=s.snum where s.city in (select city from salesmen where city='
+London');
+
+OR
+
+select * from orders o join salesmen s on o.snum=s.snum where s.city in (select city from salesmen where city='London');
+
+32.
+select cnum,cname from customers where cnum > (select snum+100 from Salesmen where sname='Jay');
+
+33.
+select cnum,rating from customers where rating > (select AVG(rating) from customers where city='London');
+
+34.
+select cnum,rating from customers where rating > (select AVG(rating) from customers where city='London');
+
+35.
+ANY:
+     select sname from salesmen s where snum=any (select snum from customers c where s.city=c.city and s.snum=c.snum);
+IN:
+    select sname from salesmen s where snum in (select snum from customers c where s.city=c.city and s.snum=c.snum);
+
+36.
+select s.sname,c.cname from salesmen s,customers c where s.snum=c.snum order by s.sname asc;
+
+37.
+select c.cname from customers c where city='Baroda'  and rating > (select max(rating) from customers where city !='Baroda');
+
+38.
+select onum,amount from orders where odate !='06-OCT-23' AND amount > (select min(amount) from orders where odate='06-OCT-23');
+
+39.
+select onum,amount from orders where amount < any (select amount from orders o,customers c where city='London' and o.cnum=c.cnum);
+
+40.
+select cname,city,rating from customers where rating > ALL (select rating from customers where city='Surat');
+
+41.
+select cname,city,rating,'Higher Rating' from customers where rating >=200
+UNION
+select cname,city,rating,'Lower Rating' from customers where rating < 200;
+
+42.
+select c.cnum,cname from customers c where 1 < (select Count(*) from orders o where c.cnum=o.cnum)
+UNION
+select s.snum,s.sname from salesmen s where 1 < (select Count(*) from orders o where s.snum=o.snum) order by 2;
+
+43.
+select snum from salesmen where city='Surat'
+UNION
+select Distinct snum from Orders where snum IN (select snum from Orders where odate like '03-OCT-%');
+
+OR
+
+select cnum from Customers where city='Surat'
+UNION
+select snum from salesmen where city='Surat'
+UNION ALL
+select onum from Orders where odate='03-OCT-23';
+
+44.
+delete from Orders where cnum IN(Select cnum from customers where cname='Lisa');
+
+45.
+update customers set rating='400' where snum IN (select snum from Salesmen where sname='Jay');
+
+46.
+update customers set rating=rating+100 where cnum IN (select cnum from customers where city='Rome');
+

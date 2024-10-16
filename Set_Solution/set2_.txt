@@ -1,0 +1,1179 @@
+SET-1 
+
+DEPARTMENT (dept_no, dept_name, location)
+
+
+1] Create the Simple DEPARTMENT Table.
+
+CREATE TABLE DEPARTMENT ( dept_no INT PRIMARY KEY, dept_name varchar(10), location varchar(10) ); OUTPUT:-
+
+
+2] Display structure of department table.
+
+describe department; OUTPUT:-
+
+
+3] Insert below records into Department Table
+
+1.INSERT INTO department values(10,'account','NY'); 2.INSERT INTO department values(20,'HR','NY'); 3.INSERT INTO department values(30,'Production','DL'); 4.INSERT INTO department values(40,'Sales','NY'); 5.INSERT INTO department values(50,'EDP','MU'); 6.INSERT INTO department values (60,'TRG',' '); 7.INSERT INTO department values(110,'RND','AH');
+
+
+
+4] Display all records of Department table
+
+select * from department; OUTPUT:-
+
+
+5] Display all department belonging to location 'NY'
+
+select * from department where location='NY'; OUTPUT:-
+
+
+6] Display details of Department 10
+
+select * from department where dept_no=10; OUTPUT:-
+
+
+7] List all department names starting with ‘a’
+
+select * from department where dept_name like 'a%';
+
+
+
+8]List all departments whose number is between 1 and 100
+
+select * from department where dept_no between 1 and 100; OUTPUT:-
+
+
+9] Delete 'TRG' department
+
+delete from department where dept_name='TRG'; OUTPUT:-
+
+
+10] Change department name 'EDP' to 'IT
+
+update department set dept_name='IT' where dept_name='EDP'; OUTPUT:-
+
+
+SET-2 
+
+EMPLOYEE (emp_id, emp_name, birth_date, gender, dept_no, address, designation, salary, experience,email) DEPARTMENT (dept_no, dept_name,location) 
+
+11] Create the EMP Table with all necessary constraints such as   In EMP TABLE: Employee id should be primary key, Department no should be  Foreign key, employee age (birth_date) should be greater than 18 years, salary should be greater than zero, email should have (@ and dot) sign in address, designation of employee can be “manager”, “clerk”, “leader”, “analyst”, “designer”, “coder”, “tester”.   create table employee (   emp_id  int primary key,   emp_name  varchar2(20),   birth_date date,   gender varchar2(6),   DEPT_NO number(38) REFERENCES department(DEPT_NO),  address varchar2(100),  designation varchar2(15),  salary decimal(9,2),  experience  varchar2(5),  email  varchar2(255) CONSTRAINT chk_emp_email CHECK (REGEXP_LIKE (email,'^[A-Za-z0-9._%+]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')) );
+
+
+1) Create DEPT table with neccessary constraint such as  Department no should be primary key, department name should be unique
+
+alter table employee add constraint ck_designation check (designation in ('manager', 'clerk', 'leader', 'analyst', 'designer', 'coder', 'tester')); OUTPUT:-
+
+12]After creation of above tables, modify Employee table by adding the constraints as ‘Male’ or ‘Female’ in gender field and display the structure.
+
+
+ALTER TABLE employee ADD CONSTRAINT gender_check CHECK(gender IN('male','female')); OUTPUT:-
+
+
+13] Insert proper data (at least 5 appropriate records) in all the tables. 
+1.  INSERT INTO employee values(1,pc,'29-SEP97','male',10,AMRELI,'manager',20000,3,'pc@gmail.com');
+
+2. INSERT INTO employee values(2,'naresh','31-
+oct98','male',20,'ahemdabad','clerk',20000,1,'vj@gmail.com');
+
+3. INSERT INTO employee values(3,'jay','15-jan98','male',30,'vyara','leader',5000,1,'df9j@gmail.com');
+
+ 4. INSERT INTO employee values(4,'annu','10-jan95','female',40,'vyara','analyst',50000,3,'annulf9j@gmail.com');
+
+ 5. INSERT INTO employee values(5,'prem','10-jan96','male',50,'amrely','designer',4000,3,'prem@gmail.com');
+
+ 6. INSERT INTO employee values(6,'jay','15-mar99','male',60,'songadh','coder',34000,5,'jay@gmail.com');
+
+7. INSERT INTO employee values(7,'anil','30-mar87','male',110,'bardoli','tester',54000,6,'anil@gmail.com');
+
+
+14] Describe the structure of table created
+ describe employee;
+
+
+
+
+15] List all records of each table in ascending order.
+ select * from employee order by emp_name asc; OUTPUT:-
+
+
+16]Delete the department whose location is Ahmedabad.
+ delete from department where location='AH';
+
+
+
+17] Display female employee list
+select * from employee where gender='female'; OUTPUT:-
+
+
+18] Display Depart name wise employee Names
+select d.dept_name, e.emp_name from employee e, department d where e.dept_no=d.dept_no order by d.dept_name; OUTPUT:-
+
+
+19] Find the names of the employee who has salary less than 5000 and greater than 2000.
+ select * from employee where salary <5000 and salary >2000; OUTPUT:-
+
+
+20]Display the names and the designation of all female employee in descending order.
+ select emp_name,designation,gender from employee where gender='female'order by emp_name desc; OUTPUT:-
+
+
+21] Display the names of all the employees who names starts with ‘A’ ends with ‘A’.
+ select * from employee where emp_name LIKE 'A%a'; OUTPUT:-
+
+
+22] Find the name of employee and salary for those who had obtain minimum salary. 
+
+->  select emp_name, salary from employee where salary=(select min(salary)from employee); OUTPUT:-
+
+
+23] Add 10% raise in salary of all employees whose department is ‘IT’.
+ update employee set salary=salary+(salary*0.10)where dept_no=(select dept_no from department where dept_name='IT'); OUTPUT:-
+
+
+24] Count total number of employees of ‘IT’ department.
+ select count(dept_no) from employee where dept_no=(select dept_no from department where dept_name='IT'); OUTPUT:-
+
+
+25] List all employees who born in the current month.   select emp_name from employee where to_char(birth_date,'MON')=to_char(sysdate,'MON'); OUTPUT:-
+
+
+26] Print the record of employee and dept table as “Employee works in department ‘MBA’.
+ select emp_name||'works in department', dept_name from employee, department; OUTPUT:-
+
+
+
+
+
+27] List names of employees who are fresher’s (less than 1 year of experience).
+select emp_name from employee where experience <1; OUTPUT:-
+
+
+28] List department wise names of employees who has more than 5 years of experience.
+ select d.dept_name, e.emp_name from employee e, department d where experience >5 ORDER BY d.dept_name ASC; OUTPUT:-
+
+
+29] Crete Sequence to generate department ID   CREATE SEQUENCE sequence_1
+start with 1 increment by 1  minvalue 0 maxvalue 100 cycle; OUTPUT:-
+
+
+30] List department having no employees   select d.dept_name from department d WHERE NOT EXISTS(select * from employee e where e.dept_no=d.dept_no); OUTPUT:-
+
+
+
+SET-3 
+
+STUDENT (rollno, name, class, birthdate)  COURSE (courseno, coursename, max_marks, pass_marks) SC (rollno, courseno, marks)
+
+
+1] Create the above three tables along with key constraints.    create table stud (       rollno number(10) primary key,       name varchar2(10) NOT NULL,       class varchar2(10) NOT NULL,       bod date    );  create table course (       courseno number(10) primary key,       coursename varchar(10) NOT NULL,       max_marks number(4) NOT NULL,       pass_marks number(4)  NOT NULL );  create table sc (           rollno number(10) references stud(rollno),           courseno number(10) references course(courseno),           marks varchar(10) NOT NULL ); OUTPUT:-
+
+
+
+2] Write an Insert script for insertion of rows with substitution variables and insertappropriate data.
+
+  1. insert into stud values(&rollno,'&name','&class','&bod');
+
+2. insert into course values(&courseno,'&coursename',&max_mark,&min_max);
+
+ 3. insert into sc values(&rollno,&courseno,'&marks');
+
+
+3] Add a constraint that the marks entered should strictly be between 0 and 100.  
+alter table sc add constraint chk_mrsk check(marks between 0 and 100);
+
+4] While creating SC table, composite key constraint was forgotten. Add the composite keynow.  alter table sc add primary key(rollno,courseno);
+
+
+5] Display details of student who takes ‘Database Management System’ course.  
+ 1. select a.*,b.*,c.* from stud a , course b , sc c where b.coursename='dbms' and c.courseno=b.courseno and c.rollno=a.rollno;
+
+2. select a.name,b.*,c.* from stud a , course b , sc c where b.coursename='dbms' and c.courseno=b.courseno and c.rollno=a.rollno;
+
+
+
+6] Display the names of students who have scored more than 70% in Computer Networksand have not failed in any subject. 
+
+select a.*,b.*,c.* from stud a , course b,sc c where c.marks>70 and b.coursename='dbms'and c.rollno in(select rollno from sc where rollno not in(select rollno from sc,course where marks<course.pass_marks))and a.rollno=c.rollno;
+
+
+7]Display the average marks obtained by each student.   select avg(marks) from stud a,sc c where c.rollno=a.rollno group by c.rollno;
+
+
+8]Select all courses where passing marks are more than 30% of average maximum mark.  
+
+
+
+DBMS LABMANUAL
+ Created BY :- MR.PC
+
+
+
+
+SET-4
+
+Create the database COMPANY and create given tables with all necessary constraints such as primary key, foreign key, unique key, not null and check constraints.  
+EMPLOYEE (emp_id, emp_name, birth_date, gender, dept_no, address, designation, salary, experience, email)
+
+create table employee (
+               emp_id  int primary key,
+               emp_name  varchar2(20),
+               birth_date date,
+               gender varchar2(6),
+               DEPT_NO number(38) REFERENCES DEPARTMENT (DEPT_NO),
+               address varchar2(100),
+               designation varchar2(15),
+               salary decimal(9,2),
+               experience  varchar2(5),
+ email  varchar2(255) CONSTRAINT chk_emp_email CHECK (REGEXP_LIKE (email,'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$'))
+);
+
+create table DEPARTMENT
+(
+dept_no int primary key,
+dept_name varchar(10)NOT NULL UNIQUE,
+ total_employees INT,
+               location varchar(10)
+);
+ CREATE TABLE PROJECT(
+proj_id INT NOT NULL PRIMARY KEY ,
+type_of_project varchar2(30),
+ status varchar2(10), start_date date,
+                              emp_id int REFERENCES employee(emp_id)
+ );
+
+
+                  Select  *  from  employee;
+
+
+           Select  *  from  department;
+
+                      Select   *  from  project;
+
+      Delete the department whose total number of employees less than 1.
+ delete from depart where total_employees <1;
+
+
+2       Display the names and the designation of all female employee in descending order
+ select emp_name,designation,gender from employee where gender='female'order by  emp_name desc;
+
+
+3       Display the names of all the employees who names starts with ‘A’ ends with ‘A’
+Select  *  from employee  where  emp_name  LIKE 'a%a';
+
+
+          Find the name of employee and salary for those who had obtain minimum salary?
+select emp_name, salary from employee where salary=(select min(salary)from employee);
+
+
+5       Add 10% raise in salary of all employees whose department is ‘CIVIL’.
+ update employee set salary=salary+(salary*0.10)where dept_no=(select dept_no from department where dept_name='CIVIL');
+
+
+       Count total number of employees of ‘MCA’ department.
+ select count(dept_no) from employee here dept_no=(select dept_no from department  where dept_name='MCA');
+
+
+                      List all employees who born in the current month.
+Select  emp_name from employee where to_char(birth_date,'MON')=to_char(sysdate,'MON');
+
+
+
+8      Print the record of employee and dept table as “Employeeworks in department ‘CE’.    
+      select emp_name||'works in department', dept_name from employee, department;
+
+      List names of employees who are fresher’s(lessthan 1 year of experience).
+ select emp_name from employee where experience <=1;
+
+
+
+1      List department wise names of employees who has more than 5 years of experience.
+select d.dept_name, e.emp_name from employee e, department d where experience >5 ORDER BY d.dept_name ASC;
+
+
+------------------------------------------------------------------------------------------------------
+
+
+
+SET – 5
+
+HOSTEL (HNO, HNAME, HADDR, TOTAL_CAPACITY, WARDEN)
+create table hostel
+(
+hnonumber(10) primary key,
+hname varchar2(20) NOT NULL,
+haddr varchar2(20) NOT NULL,
+total_capacitynumber(10),
+warden varchar2(20)
+);
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+1
+Tejash Patel
+navsari
+500
+vidhi
+2
+Shashi Patel
+surat
+100
+vidhi
+3
+Dhaval Shah
+surat
+500
+kamini
+4
+Raju
+bombay
+500
+pooja
+5
+viren
+bombay
+100
+pooja
+
+ROOM (HNO, RNO, RTYPE, LOCATION, NO_OF_STUDENTS, STATUS)
+create table room
+(
+hnonumber(10) references hostel(hno),
+rnonumber(10) not null,
+rtype varchar2(10) not null,
+          location varchar2(10) not null,
+no_of_studentsnumber(5),
+          status varchar2(20),
+          primary key(hno,rno)
+);
+HNO
+RNO
+RTYPE
+LOCATION
+NO_OF_STUDENTS
+STATUS
+1
+1
+s
+haj
+500
+vacant
+2
+1
+f
+haj
+500
+vacant
+2
+3
+s
+haj
+500
+vacant
+2
+2
+t
+haj
+500
+vacant
+2
+4
+f
+haj
+500
+vacant
+
+CHARGES (HNO, RTYPE, CHARGES)
+create table charges
+(
+hnonumber(10) references hostel(hno),
+rtype varchar2(10) not null,
+          charges number(10),
+          primary key(hno,rtype)
+);
+HNO
+RTYPE
+CHARGES
+1
+d
+5000
+2
+s
+5000
+3
+s
+5000
+
+STUDENT (SID, SNAME, MOBILE-NO, GENDER, FACULTY, DEPT, CLASS, HNO, RNO)
+create table student
+(
+sidnumber(10) primary key,
+sname varchar2(20),
+saddr varchar2(20),
+          faculty varchar2(20),
+          dept varchar2(10),
+          class varchar2(10),
+hnonumber(10) references hostel(hno),
+rnonumber(10)
+);
+SID
+SNAME
+SADDR
+FACULTY
+DEPT
+CLASS
+HNO
+RNO
+1
+meet
+city light
+Tejash sir
+1
+mca2
+1
+2
+2
+karan
+Undhana road
+Shashi sir
+2
+mca2
+2
+2
+3
+jay
+city light
+neha mam
+3
+mca2
+3
+2
+4
+sami
+Undhana road
+khusbhoo mam
+2
+mca2
+4
+2
+5
+kunal
+city light
+Tejash sir
+3
+mca2
+5
+2
+
+FEES (SID, FDATE, FAMOUNT)
+create table fees
+(
+          sidnumber(10),
+          fdate date,
+          famount number(10),
+          primary key(sid,fdate)
+);
+SID
+FDATE
+FAMOUNT
+1
+02-OCT-18
+500
+2
+08-OCT-18
+500
+3
+12-OCT-18
+500
+4
+22-OCT-18
+500
+5
+27-OCT-18
+500
+Do as directed:
+1.     Display the total number of rooms that are presently vacant.
+select count(rno) from room where status = 'vacant';
+COUNT(RNO)
+5
+
+2.     Display number of students of each faculty and department wise staying in each hostel.
+select count(sid),faculty from student group by faculty;
+COUNT(SID)
+FACULTY
+1
+Shashi sir
+2
+Tejash sir
+1
+neha mam
+1
+khusbhoo mam
+
+3.     Display hostels, which have at least one single-seated room.
+select a.* from hostel a, room b
+where b.hno = a.hno and b.rtype = 's';
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+1
+Tejash Patel
+navsari
+500
+vidhi
+2
+Shashi Patel
+surat
+100
+vidhi
+
+4.     Display the warden name and hostel address of students of Computer Science department.
+select warden, haddr from hostel a, student b
+where b.hno = a.hno and b.dept = 3;
+WARDEN
+HADDR
+kamini
+surat
+pooja
+bombay
+
+5.     Display those hostel details where single seated or double-seated rooms are vacant.
+
+select * from hostel
+where hno in (
+select b.hno from hostel a, room b
+where a.hno = b.hno and b.rtype in( 's','f') and status = 'vacant' group by b.hno
+);
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+1
+Tejash Patel
+navsari
+500
+vidhi
+2
+Shashi Patel
+surat
+100
+vidhi
+
+6.     Display details of hostels occupied by medical students.
+select a.* from hostel a, room b
+where b.hno = a.hno and b.status = 'occupied by medical';
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+1
+Tejash Patel
+navsari
+500
+vidhi
+
+7.     Display hostels, which are totally occupied to its fullest capacity.
+select a.* from hostel a, room b
+where b.hno = a.hno and b.status = 'occupied';
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+1
+Tejash Patel
+navsari
+500
+vidhi
+
+8.     List details about students who are staying in the double-seated rooms of Chanakya Hostel.
+select * from student where hnoin(
+select a.hno from hostel a, room b
+where b.hno = a.hno and a.hname = 'Shashi Patel' and rtype = 'f'
+);
+SID
+SNAME
+SADDR
+FACULTY
+DEPT
+CLASS
+HNO
+RNO
+2
+karan
+Undhana road
+Shashi sir
+2
+mca2
+2
+2
+
+9.     Display the total number of students staying in each room type of each hostel.
+select sum(no_of_students), rtype from room
+group by rtype;
+SUM(NO_OF_STUDENTS)
+RTYPE
+1000
+s
+500
+t
+2000
+f
+
+10.  Display details about students who have paid fees in the month of Nov. 2017.
+select * from student where sidin(
+select sid from fees where to_char(fdate, 'mon') = 'nov'
+);
+SID
+SNAME
+SADDR
+FACULTY
+DEPT
+CLASS
+HNO
+RNO
+5
+kunal
+city light
+Tejash sir
+3
+mca2
+5
+2
+
+11.  For those hostels where total capacity is more than 300, display details of students studying in Science faculty.
+select a.*, b.* from student a, hostel b
+where a.hno = b.hno and a.faculty = 'Tejash sir' and b.TOTAL_CAPACITY> 300
+SID
+SNAME
+SADDR
+FACULTY
+DEPT
+CLASS
+HNO
+RNO
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+1
+meet
+city light
+Tejashsir
+1
+mca2
+1
+2
+1
+Tejash Patel
+navsari
+500
+vidhi
+
+12.  Display hostel details where there are at least 10 vacant rooms.
+select a.*, b.rtype from hostel a, room b
+where a.hno = b.hno and b.status = 'vacant' and b.no_of_students>10;
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+RTYPE
+1
+Tejash Patel
+navsari
+500
+vidhi
+s
+2
+Shashi Patel
+surat
+100
+vidhi
+f
+2
+Shashi Patel
+surat
+100
+vidhi
+s
+2
+Shashi Patel
+surat
+100
+vidhi
+t
+2
+Shashi Patel
+surat
+100
+vidhi
+f
+
+13.  Display details of students who have still not paid fees.
+select * from student
+where sid not in (
+select sid from fees where to_char(fdate, 'mon') = 'nov'
+);
+SID
+SNAME
+SADDR
+FACULTY
+DEPT
+CLASS
+HNO
+RNO
+1
+meet
+city light
+Tejash sir
+1
+mca2
+1
+2
+2
+karan
+Undhana road
+Shashi sir
+2
+mca2
+2
+2
+3
+jay
+city light
+neha mam
+3
+mca2
+3
+2
+4
+sami
+Undhana road
+khusbhoo mam
+2
+mca2
+4
+2
+
+14.  Display those hostels where single-seated room is the costliest.
+select a.* from hostel a, charges b
+where a.hno = b.hno and rtype = 's' and charges = (
+select max(charges) from charges
+);
+HNO
+HNAME
+HADDR
+TOTAL_CAPACITY
+WARDEN
+2
+Shashi Patel
+surat
+100
+vidhi
+3
+Dhaval Shah
+surat
+500
+kamini
+
+15.  Write a trigger which do not allow to insert or update student record if mobile_no length is less than 10 digits.
+
+                                                                                                                     
+16.  Write a PL/SQL block which will count total number of student’s gender wise.
+Male Students: 999 students
+Female Students: 999 students
+
+
+--------------------------------------------------------------------------------------------------------------------------
+
+
+
+SET – 6
+Create the database HOSPITAL and create given tables with all necessary constraints such as primary key, foreign key, unique key, not null and check constraints.
+
+DOCTOR (DNO, DNAME, SPECIALIZATION, CLINIC_ADDR)
+
+CREATE TABLE DOCTOR (
+DNO INT PRIMARY KEY,
+DNAME VARCHAR(60) NOT NULL,
+SPECIALIZATION VARCHAR(100) NOT NULL,
+CLINIC_ADDR VARCHAR(200) NOT NULL
+);
+
+MEDICINE (MNO, MNAME, TYPE, CONTENT, MANUFACTURER)
+CREATE TABLE MEDICINE (
+MNO VARCHAR(20) PRIMARY KEY,
+MNAME VARCHAR(200) NOT NULL,
+TYPE VARCHAR(40) NOT NULL,
+CONTENT VARCHAR(500) NOT NULL,
+MANUFACTURER VARCHAR(100) NOT NULL
+);
+
+DISEASE (DISEASE_NAME, SYMPTOM1, SYMPTOM2, SYMPTOM3)
+CREATE TABLE DISEASE (
+DISEASE_NAME VARCHAR(100) NOT NULL,
+SYMPTOM1 VARCHAR(40) NOT NULL,
+SYMPTOM2 VARCHAR(40) NOT NULL,
+SYMPTOM3 VARCHAR(40) NOT NULL   
+);
+
+TREATMENT (TNO, DNO, DISEASE_NAME, MNO, DOSAGE, AVG_CURE_TIME)
+CREATE TABLE TREATMENT (
+TNO INT PRIMARY KEY,
+DNO INT REFERENCES doctor(DNO) ,
+DISEASE_NAME VARCHAR(100) REFERENCES disease(DISEASE_NAME),
+MNO VARCHAR(20) REFERENCES medicine(MNO),
+DOSAGE int NOT NULL,
+AVG_CUR_TIME int NOT NULL
+);
+
+
+
+
+
+                                               
+
+1.     Display records of each table in ascending order.
+SELECT * FROM `disease` ORDER BY DISEASE_NAME ASC;
+2.     Count total number of doctors which has not given any treatment.
+SELECT * FROM `doctor` WHERE DNO NOT IN (SELECT DNO FROM treatment);
+
+
+3.     Display all Chennai doctors who treat cancer.
+SELECT * FROM `doctor` WHERE CLINIC_ADDR = 'rajkot' AND SPECIALIZATION = 'heart';
+
+
+4.     Remove disease “cancer” from disease table as well as treatment table.
+DELETE FROM disease WHERE DISEASE_NAME = 'cancer';
+DELETE FROM treatment WHERE DISEASE_NAME = 'cancer';
+
+     
+
+5.     Delete all those treatment related to liver of Dr.Prem.
+DELETE FROM `treatment` WHERE `DNO` = (SELECT DNO FROM doctor WHERE DNAme = 'Dr.prem');
+
+6.     Create index on dno, Disease name in the treatment table.
+CREATE INDEX in_dno on disease(DISEASE_NAME);
+
+
+7.     Display details of doctors who treat migraines.
+SELECT * FROM `doctor` WHERE DNO = (SELECT DNO FROM treatment WHERE disease_name = 'fever');
+
+
+8.     What is the maximum dosage of “penicillin” prescribe by the doctor for the treatment of any disease?
+SELECT MAX(DOSAGE) FROM treatment WHERE MNO = (SELECT MNO FROM medicine WHERE mname = 'PARASITA MOL');
+
+
+9.     Display total number of disease treated by every doctor.
+SELECT COUNT(DISEASE_NAME) as NumberOfDisease  FROM `treatment`;
+
+
+
+10.  Which doctor have no treatment for “depression”?
+SELECT * FROM `doctor` WHERE dno not in (SELECT dno FROM treatment WHERE disease_name = 'fever');
+
+11.  Create a view which contains the treatment and doctors details. Make sure that no body is allowed to modify any detail in the view.
+CREATE OR REPLACE VIEW doctor_View AS
+SELECT a.*, b.TNO, b.DISEASE_NAME, b.MNO, b.DOSAGE, b.AVG_CUR_TIME from doctor a, treatment b
+WHERE a.DNO = b.DNO;
+
+
+
+12.  Write a PL/SQL block to print the following report ( Symptoms wise print total number of medicine given )
+
+
+
+
+13.  Write a trigger which does not allow to insert or update treatment table if AVG_CURE_TIME is less than 1.
+
+===================================================================
+
+
+
+SET – 7
+
+Create the database SHOPPING and create given tables with all necessary constraints such as primary key, foreign key, unique key, not null and check constraints.
+
+CUSTOMER (cno, cust_name, cust_phone, location,gender)
+create table customer
+(
+cno int primary key,
+cust_namevarchar(30) not null,
+cust_phonenumber(10),
+location varchar(30),
+gender varchar(6) ,
+constraint ck_gencheck(gender in('male', 'female'))
+);
+
+
+ITEM (itemno, itemname, color, weight, expire_date, price, shop_name)
+create table item
+(
+itemno int primary key,
+itemnamevarchar(30) not null,
+colorvarchar(10),
+weight int,
+expire_date date,
+price int check(price > 0),
+shop_namevarchar(30)
+);
+
+
+
+
+
+CUST_ITEM (cno, itemno, quantity_purchased, date_purchase)
+create table cust_item
+(cno ,
+itemno,
+quantity_purchased int constraint ck_qulcheck(quantity_purchased> 0),
+date_purchase date,
+constraint fk_cno foreign key(cno) references customer(cno),
+constraint fk_itemno foreign key(itemno) references item(itemno)
+);
+
+1.     Delete the items whose price is more than 50000.
+delete from cust_item  whereitemno in(select itemno from item where price > 50000);
+delete from item where price > 50000;
+
+
+
+
+
+
+
+
+
+2.     Find the names of the customer who is located in same location as that of other customer.
+
+
+
+
+
+
+3. Display the names of items which is black, white & brown in color.
+            select * from item where color in ('black','white');
+
+
+4. Display the names of all the items whose names lies between ‘p’ and ‘s’.
+            select * from item where itemname between 'P' and 'S';
+
+5.  Find the item which is having less weight.
+            select * from item where weight = (select min(weight) from item);
+
+6. Add one month more to those items whose item no =40.
+            select ADD_MONTHS(expire_date,1) from item where itemno = 4;
+
+
+
+
+7. Count total number of items which is going to expire in next month
+select count(itemno) from item where to_char(expire_date, 'MM') = (to_char(sysdate, 'MM') );
+
+
+
+
+8. List all customers whose phone number starts with ‘99’.
+            select * from customer where cust_phone like '99%';
+
+
+9. Display total value (qty*price) for all items.
+            select (QUA_P * PRICE) as value from item a ,cust_item b
+            where a.itemno = b.itemno;
+
+10. List customer details who has purchased maximum number of items
+
+
+
+
+
+11. Display total price item wise.
+            select itemname, price from item;
+
+
+12. List name of items, customer details and qty purchased.
+            select i.itemname, c.*, t.qua_p from customer c, item i, cust_item t
+            where c.cno = t.c_no and i.itemno = t.itemno;
+
+
+13. Write a PL/SQL procedure which will display records in the following format
+
+
+
+
+
+
+
+
+
+14. Write a trigger which do not allow insertion / updation / deletion of Item details on Sunday.
+
+===================================================================
+
+                                                           set 8
+
+APPLICANT (aid, aname, addr, abirth_dt)
+ENTRANCE_TEST (etid, etname, max_score, cut_score)
+ETEST_CENTRE (etcid, location, incharge, capacity)
+ETEST_DETAILS (aid, etid, etcid, etest_dt, score)
+
+
+CREATE TABLE
+
+Application:
+create table applicant
+(
+      aid varchar2(5) primary key,
+      aname varchar2(20),
+      addr varchar2(20),
+      abirth_dt date
+);
+
+Entrance_Test
+create table entrance_test
+(
+      etid number(10) primary key,
+      etname varchar2(20),
+      max_score number(10),
+      cut_score number(10)
+);
+
+Etest_Centre
+create table etest_centre
+(
+      etcid number(10) primary key,
+      location varchar2(15),
+      incharge varchar2(10),
+      capacity number(10)
+);
+
+Etest_Details
+create table etest_details
+(
+      aid varchar2(5) references applicant(aid),
+      etid number(10) references entrance_test(etid),
+      etcid number(10) references etest_centre(etcid),
+      etest_dt date check(to_char(etest_dt,’d’)<>1),
+      score number(10),
+      primary key(aid,etid,etcid)
+);
+
+INSERT RECORDS
+
+ -- Insert Into Application
+insert into applicant values('A001','pankaj','bglore','25-jan-1988');
+insert into applicant values('A002','sumit','pune','07-jun-1989');
+insert into applicant values('A003','jigee','kolkata','12-apr-1990');
+insert into applicant values('A004','monica','madras','02-jul-1988');
+insert into applicant values('A005','parul','rajkot','01-aug-1989');
+insert into applicant values('A006','geeta','mumbai','03-dec1988');
+insert into applicant values('A007','sweta','surat','02-mar-1991');
+insert into applicant values('A008','ami','anand','11-oct-1991');
+
+
+-- Insert Into Entrace_Test
+insert into entrance_test values(01,'GCET',400,150);
+insert into entrance_test values(02,'AIEEE',200,100);
+insert into entrance_test values(03,'NIIT',200,130);
+insert into entrance_test values(04,'PMT',500,200);
+insert into entrance_test values(05,'NDA',100,50);
+insert into entrance_test values(06,'PABT',150,75);
+
+-- Insert Into Etest_Centre
+insert into etest_centre values(01,'JAMNAGAR','SWETAmam',120);
+insert into etest_centre values(02,'PUNE','supriyamam',60);
+insert into etest_centre values(03,'BGLORE','nilesh',120);
+insert into etest_centre values(04,'DELHI','vikram',100);
+insert into etest_centre values(05,'SURAT','aartimam',50);
+insert into etest_centre values(06,'MEHSANA','vipulsir',200);
+insert into etest_centre values(07,'RAJKOT','tyagisir',150);
+
+-- Insert Into Etest_Details
+insert into etest_details values('A001',02,03,'25-dec-2010',150);
+insert into etest_details values('A002',03,06,'04-mar-2011',120);
+insert into etest_details values('A002',02,02,'29-jan-2010',120);
+insert into etest_details values('A004',04,04,'05-dec-2010',114);
+insert into etest_details values('A002',05,07,'02-jan-2011',99);
+insert into etest_details values('A006',04,04,'21-apr-2011',300);
+insert into etest_details values('A006',06,02,'20-feb-2011',76);
+
+
+(This database is for a common entrance test which is being conducted at a number of
+centers and can be taken by an applicant on any day except holidays)
+
+
+
+Modify the APPLICANT table so that every applicant id has an ‘A’ before its value. E.g. if value is ‘1123’, it should become ‘A1123’.
+
+alter table applicant add check (aid like 'A%');
+Display test center details where no tests were conducted.
+
+select * from etest_centre where etcid not in (select etcid from etest_details group by etcid);
+Display details about applicants who have the same score as that of Jaydev in ‘ORACLE FUNDAMENTALS’.
+
+select applicant.aid,applicant.aname from applicant, entrance_test,etest_detailswhere applicant.aid=etest_details.aid and score =
+(
+select score
+from etest_details ed,entrance_test et,applicant a
+where et.etname='AIEEE' and et.etid=ed.etid
+and a.aname='pankaj' and a.aid=ed.aid
+) and entrance_test.etname='AIEEE'
+and entrance_test.etid=etest_details.etid;
+Display details of applicants who appeared for all tests.
+
+select aid from etest_details where etid = all (select etid from etest_details);
+Display those tests where no applicant has failed.
+
+select * from entrance_test where etid not in (select ed.etid from etest_details ed,entrance_test et
+where ed.etid=et.etid and score<cut_score);
+Display details of entrance test centers which had full attendance between 1st Oct 05 and 
+15th Oct 05.
+
+select etcid from etest_centre where (etcid,capacity) in (
+select etcid,count(*) from etest_details where etest_dt>'1-sep-2010' and etest_dt<'30-dec-2010' group by etcid );
+Display details of the applicants who scored more than the cut score in the teststhey appeared in.
+
+select ed.etid,cut_score,score from etest_details ed, entrance_test et
+where ed.etid=et.etid and score>cut_score
+Display average and maximum score test wise of tests conducted at Mumbai.
+
+select max(ed.score) "MAX", avg(ed.score) "AVG" from etest_details ed, etest_centre et where et.location='DELHI' and et.etcid=ed.etcid group by ed.etid;
+Display the number of applicants who have appeared for each test, test center wise
+
+select ed.etid,ed.etcid,count(aid) from etest_details ed
+group by ed.etid,ed.etcid order by etid;
+Display details about test centers where no tests have been conducted.
+
+select * from etest_centre where etcid not in (select etcid from etest_details);
+For tests, which have been conducted between 2-3-04 and 23-4-04, show details of the tests as well as the test centres.
+
+select ed.etid, et.etname, et.max_score, et.cut_score, ec.etcid, ec.location, ec.incharge, ec.capacity from etest_details ed, entrance_test et, etest_centre ec
+where etest_dt>'01-dec-2010' and etest_dt<'30-dec-2010' and et.etid=ed.etid and ec.etcid=ed.etcid;
+How many applicants appeared in the ‘ORACLE FUNDAMENTALS’ test at Chennai in the month of February ?
+
+select count(*) "NO"
+from etest_details ed, etest_centre ec, entrance_test et
+where to_char(etest_dt,'mon')='dec'
+and ec.location='DELHI' and ec.etcid=ed.etcid and et.etid=ed.etid
+and etname='PMT' group by ec.etcid;
+Display details about applicants who appeared for tests in the same month as the month in which they were born.
+
+select aid,aname from applicant where aid in(
+select a.aid from applicant a,etest_details ed where to_char(a.abirth_dt,'mon')=to_char(ed.etest_dt,'mon'));
+Display the details about APPLICANTS who have scored the highest in each test,test centre wise.
+
+select ed.etid,ed.etcid,max(score) from etest_details ed
+group by ed.etid,ed.etcid order by etid;
+Design a read only view, which has details about applicants and the tests that he has appeared for.
+
+create view view1 as select a.aid,aname,et.etid,et.etname from applicant a, etest_details ed,entrance_test et where a.aid=ed.aid and et.etid=ed.etid WITH READ ONLY

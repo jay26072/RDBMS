@@ -1,0 +1,29 @@
+create table Department(
+dept_no int,
+dept_name varchar2(25),
+location varchar2(25)
+);
+
+desc Department
+
+Insert into Department Values(10,'Account','NY');
+Insert into Department Values(20,'HR','NY');
+Insert into Department Values(30,'Production','DL');
+Insert into Department Values(40,'Sales','NY');
+Insert into Department Values(50,'EDP','MU');
+Insert into Department Values(60,'TRG','');
+Insert into Department Values(110,'RND','AH');
+
+select * from Department
+
+select dept_name from Department where location='NY';
+
+select * from Department where dept_no=10
+
+select dept_name from Department Where dept_name like 'A%'
+
+select dept_name from Department Where dept_no between 1 and 100;
+
+Delete from Department where dept_name='TRG';
+
+update Department set dept_name='IT' where dept_name='EDP'

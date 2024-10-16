@@ -1,0 +1,98 @@
+//https://paresh-chavda.blogspot.com/p/set-1-department-deptno-deptname_26.html
+
+Create table Dept(
+dept_no int Primary Key,
+dept_name varchar2(6),
+location varchar2(6),
+UNIQUE (dept_name)
+)
+
+Insert Into Dept Values(1,'IT','Surat');
+Insert Into Dept Values(2,'Finance','Ahmedabad');
+Insert Into Dept Values(3,'Sales','Mumbai');
+Insert Into Dept Values(4,'Administration','Bardoli');
+
+alter table Dept
+Modify dept_name varchar2(20)
+
+alter table Emp
+Modify email varchar2(25)
+
+desc Dept
+
+create table Emp(
+emp_id int Primary Key,
+emp_name varchar2(25),
+birth_date date,
+gender varchar2(5),
+dept_no int,
+Foreign Key (dept_no) References Dept(dept_no)
+ON DELETE CASCADE,
+address varchar2(50),
+designation varchar2(25),
+salary int,
+experience int,
+email varchar2(15)
+) 
+
+
+
+Insert Into EMP Values(1,'Jay','26-JUL-2002','Male',1,'Surat','Designer',2500,2,'jay26@gmail.com');
+Insert Into EMP Values(2,'ABC','09-JAN-2003','Male',1,'Bardoli','Coder',2000,1,'abc@12gmail.com');
+Insert Into EMP Values(3,'Riya','11-FEB-2001','Female',4,'Navsari','Manager',4000,3,'riya@gmail.com');
+Insert Into EMP Values(4,'Krunal','6-MAY-2000','Male',1,'Surat','Tester',2500,2,'krunal@gmail.com');
+Insert Into EMP Values(5,'Mukesh','22-DEC-2001','Male',2,'Valsad','Clerk',5000,4,'mukesh@gmail.com');
+Insert Into EMP Values(6,'Axar','05-JUN-2003','Male',3,'Bardoli','Leader',6000,1,'axar02@gmail.com');
+Insert Into EMP Values(7,'Khushi','02-MAR-2002','Female',5,'Bardoli','Leader',6000,4,'khushi@gmail.com');
+
+
+desc Emp
+
+select * from Emp
+
+select * from dept Order By dept_name asc
+
+select * from Emp Order By emp_name asc;
+
+delete from Dept where location='Ahmedabad'
+
+select * from emp where gender='Female'
+
+Display Departname wise employee Names.
+
+select d.dept_name,e.emp_name from Emp e join Dept d on d.dept_no=e.dept_no.
+
+
+12.
+select emp_name from Emp where salary >2000 AND salary <5000;
+
+13.
+select emp_name,designation from Emp where gender='Female' Order By designation desc;
+
+14.
+select * from Emp where emp_name like 'A%A';
+
+15.
+select emp_name,salary from Emp where salary=(select min(salary) from Emp )
+
+16.
+update employee set salary=salary+(salary*0.10)where 
+dept_no=(select dept_no from department where dept_name='IT');
+
+17.
+select count(*) as count,Dept_name from Emp
+inner join Dept on Emp.Dept_no=Dept.dept_no where emp.dept_no=1
+group by dept.dept_name
+
+18.
+select emp_name from emp where to_char(birth_date,'MON')=to_char(sysdate,'MON');
+Note:Add Krunal date currentdate;
+
+19.
+select emp_name||' Works in Department', dept_name from Emp, Dept;
+
+20.
+select emp_name from emp where experience <1;
+
+21.
+select d.dept_name, e.emp_name from Emp e, Dept d where experience >5 ORDER BY d.dept_name ASC;
