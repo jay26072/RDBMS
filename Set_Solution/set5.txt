@@ -1,0 +1,166 @@
+/* Create Table applicant */
+
+create table applicant(
+    aid varchar2(5) primary key,
+    aname varchar2(20),
+    addr varchar2(20),
+    abirth_dt date
+);
+
+//
+
+/* Create Table entrance_test */
+
+create table entrance_test
+(
+    etid number(5) primary key,
+    etname varchar2(20),
+    max_score number(10),
+    cut_score number(10)
+);
+
+//
+
+/* Create Table etest_center */
+
+create table etest_center
+(
+    etcid number(5) primary key,
+    location varchar2(15),
+    incharge varchar2(10),
+    capacity number(10)
+);
+
+/* Create Table etest_details */
+
+create table etest_details
+(
+    aid varchar2(5) references applicant(aid),
+    etid number(10) references entrance_test(etid),
+    etcid number(10) references etest_center(etcid),
+    etest_dt date check(to_char(etest_dt,'d')<>1),
+    score number(10),
+    primary key(aid,etid,etcid)
+);
+
+
+//
+
+/* Insert Into applicant */
+
+Insert into applicant values('A001','Jay','Bardoli','26-JUN-2002');
+Insert into applicant values('A002','Sumit','Pune','07-MAY-2002');
+Insert into applicant values('A003','Jigar','Mumbai','20-APR-2001');
+Insert into applicant values('A004','Krish','Navsari','02-MAR-2003');
+Insert into applicant values('A005','Lisa','Surat','19-MAR-2002');
+Insert into applicant values('A006','Saxi','Bardoda','10-APR-2000');
+Insert into applicant values('A007','Shiv','Bardoli','16-MAR-2001');
+Insert into applicant values('A008','Ami','Valsad','24-JUL-2003');
+Insert into applicant values('A009','Ajaykumar','Surat','29-NOV-2000');
+
+
+
+/* Insert Into entrance_test */
+
+Insert into entrance_test values(01,'GCET',400,150);
+Insert into entrance_test values(02,'AIEEE',200,100);
+Insert into entrance_test values(03,'NIIT',200,130);
+Insert into entrance_test values(04,'PMT',500,200);
+Insert into entrance_test values(05,'NDA',100,50);
+Insert into entrance_test values(06,'PABT',150,75);
+
+
+/* Insert Into etest_center */
+
+Insert into etest_center values(01,'JAMNAGAR','Mukesh',120);
+Insert into etest_center values(02,'PUNE','Priya',60);
+Insert into etest_center values(03,'Chennai','Krishna',120);
+Insert into etest_center values(04,'DELHI','Chirag',100);
+Insert into etest_center values(05,'SURAT','Hary',50);
+Insert into etest_center values(06,'MEHSANA','Dhruv',200);
+Insert into etest_center values(07,'RAJKOT','Ronak',150);
+
+
+//
+
+/* Insert Into etest_details */
+
+insert into etest_details values('A001',03,8,'11-APR-2017',300);
+insert into etest_details values('A002',01,04,'06-MAR-2017',150);
+insert into etest_details values('A004',2,2,'9-APR-2017',210);
+insert into etest_details values('A005',03,02,'22-APR-2017',150);
+insert into etest_details values('A007',02,08,'12-MAR-2017',116);
+insert into etest_details values('A003',05,06,'20-MAR-2017',200);
+insert into etest_details values('A006',03,07,'21-MAR-2017',200);
+
+
+
+
+1.
+Alter table applicant add check (aid like 'A%');
+
+2.
+Select * from etest_center
+  where etcid not in (
+    select etcid from etest_details group by etcid
+);
+
+3.
+SELECT * FROM applicant a, etest_details e 
+WHERE a.aid = e.aid AND score IN(
+    SELECT e.score FROM applicant a, etest_details e,entrance_test e2
+    WHERE a.aid = e.aid AND e2.ETID = e.etid AND a.aname LIKE 'Sumit' AND e2.ETNAME LIKE 'GCET'
+);
+
+4.
+SELECT a.aname,a.aid FROM applicant aWHERE a.aid IN(
+    SELECT aid FROM etest_details GROUP BY aid HAVING COUNT(aid) =( 
+        SELECT COUNT(*) FROM( SELECT etid FROM etest_details GROUP BY ETID )
+    )
+);
+
+5.
+select * from entrance_test 
+where etid not in (select ed.etid from etest_details ed,entrance_test et
+where ed.etid=et.etid and score<cut_score);
+
+6.
+
+
+7.
+select ed.etid,cut_score,score from etest_details ed, entrance_test et
+where ed.etid=et.etid and score>cut_score
+
+
+8.
+SELECT max(ed.score) "MAX", avg(ed.score) "AVG" from etest_details ed, etest_center et 
+WHERE et.location='DELHI' and et.etcid=ed.etcid group by ed.etid;
+
+9.
+SELECT ed.etid,ed.etcid,count(aid) FROM etest_details ed
+group by ed.etid,ed.etcid order by etid;
+
+10.
+SELECT * FROM etest_center
+WHERE etcid NOT IN( SELECT etcid FROM etest_details);
+
+11.
+SELECT ed.etid,et.etname,et.max_score,et.cut_score,ec.etcid,ec.location,ec.incharge,ec.capacity 
+FROM etest_details ed,entrance_test et,etest_center ec
+WHERE  etest_dt > '2-MAR-2017' AND etest_dt < '23-APR-2017' AND et.etid = ed.etid AND ec.etcid = ed.etcid;
+
+12.
+SELECT et.etname, COUNT(*) "No Of Applicant in CHENNAI" FROM etest_details ed, etest_centre ec, entrance_test et 
+WHERE to_char(etest_dt,'MON')='FEB'
+AND ec.location='CHENNAI' 
+AND ec.etcid=ed.etcid 
+AND et.etid=ed.etid 
+AND et.etname='ORACLE FUNDAMENTALS' GROUP BY et.etname;
+
+13.
+SELECT * FROM APPLICANT a , etest_details e 
+WHERE a.aid = e.aid and to_char(e.ETEST_DT,'MON') = to_char(a.abirth_dt,'MON') ;
+
+14.
+SELECT ed.etid,ec.location, ed.aid, MAX(ed.score) FROM etest_details ed, etest_center ec
+WHERE ec.etcid = ed.etcid GROUP BY ed.etid, ed.aid, ec.location ORDER BY ed.etid;
