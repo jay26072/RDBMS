@@ -1,0 +1,192 @@
+Clear SqlPlus Cmd Screen
+-> cl scr
+
+=========================================================================================================================================================
+
+/* Create EMP Table */
+
+Create Table EMP(
+ empno int Primary key,
+ empnm varchar2(25),
+ empadd varchar2(50),
+ salary int,
+ date_birth date,
+ joindt date,
+ deptno int
+);
+
+=========================================================================================================================================================
+
+/* Create Table JOB */
+
+Create Table JOB(
+ jobid int Primary key,
+ type_of_job varchar2(20),
+ status varchar2(10)
+);
+
+=========================================================================================================================================================
+
+/* Create Table ITEMS */
+
+Create Table ITEMS(
+ itemno int Primary Key,
+ name varchar2(20),
+ color varchar2(15),
+ weight varchar2(25)
+);
+
+=========================================================================================================================================================
+
+/* Create Table WORKER */
+
+Create Table WORKER(
+ workerid int Primary key,
+ name varchar2(25),
+ wage_per_hour varchar2(25),
+ specialized_in varchar2(25),
+ manager_id int
+);
+
+=========================================================================================================================================================
+
+/* EMP */
+ Insert Into EMP Values(1,'Jay','Bardoli',20000,'26-JUL-2002','5-DEC-2023',11);
+ Insert Into EMP Values(2,'Krish','Surat',15000,'16-MAY-2003','02-JAN-2022',12);
+ Insert Into EMP Values(3,'Kevin','Navsari',25000,'12-FEB-2001','22-AUG-2021',11);
+ Insert Into EMP Values(4,'Sunil','Mumbai',20000,'11-MAY-2000','14-SEP-2020',13);
+ Insert Into EMP Values(5,'Lisa','Vapi',10000,'21-APR-2002','02-NOV-2023',14);
+ Insert Into EMP Values(6,'Nancy','Surat',15000,'09-JUN-2002','02-JAN-2022',15);
+
+
+/* JOB */
+ Insert Into JOB Values(1,'Manager','Complete');
+ Insert Into JOB Values(2,'Leader','Incomplete');
+ Insert Into JOB Values(3,'Analyst','Complete');
+ Insert Into JOB Values(4,'Designer','Incomplete');
+ Insert Into JOB Values(5,'Tester','Complete');
+ Insert Into JOB Values(6,'Clerk','Incomplete');
+
+
+/* ITEMS */
+ Insert Into ITEMS Values(1,'Mouse','Black','0.2kg');
+ Insert Into ITEMS Values(2,'Keyboard','White','1.5kg');
+ Insert Into ITEMS Values(3,'Monitor','Grey','10kg');
+ Insert Into ITEMS Values(4,'Laptop','Black','2kg');
+ Insert Into ITEMS Values(5,'Printer','White','5kg');
+ Insert Into ITEMS Values(6,'Scanner','Grey','3kg');
+
+
+/* Worker */
+
+ Insert Into WORKER Values(1,'Amit','2000','Manager',11);
+ Insert Into WORKER Values(2,'Bhavesh','2500','Painting',12);
+ Insert Into WORKER Values(3,'Chirag','3000','Analyst',13);
+ Insert Into WORKER Values(4,'Dhruv','4000','Designer',14);
+ Insert Into WORKER Values(5,'Anjali','5000','Tester',15);
+ Insert Into WORKER Values(6,'Falguni','6000','Painting',16);
+
+
+
+
+=========================================================================================================================================================
+
+Q.1 Write a PLSQL block which will print Employee list (Empno and Name) EMP (empno, empnm, empadd, salary, date_birth, joindt, deptno) 
+
+DECLARE
+    CURSOR emp_cursor IS
+        SELECT empno, empnm FROM EMP;
+    v_empno EMP.empno%TYPE;
+    v_empnm EMP.empnm%TYPE;
+BEGIN
+    OPEN emp_cursor;
+    LOOP
+        FETCH emp_cursor INTO v_empno, v_empnm;
+        EXIT WHEN emp_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Emp No: ' || v_empno || ', Name: ' || v_empnm);
+    END LOOP;
+    CLOSE emp_cursor;
+END;
+/
+
+=========================================================================================================================================================
+
+Q.2 Write a function that returns total number of incomplete jobs, using table JOB (jobid, type_of_job, status)
+
+CREATE OR REPLACE FUNCTION get_incomplete_job_count
+RETURN NUMBER
+IS
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count
+    FROM JOB
+    WHERE status = 'Incomplete';
+    RETURN v_count;
+END;
+/
+
+
+/* Call get_incomplete_job_count() */
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Number of incomplete jobs: ' || get_incomplete_job_count);
+END;
+/
+
+
+=========================================================================================================================================================
+
+Q.3 Write a function which displays the number of items whose weight fall between a given ranges for a particular color using table ITEM (itemno, name, color, weight) 
+
+CREATE OR REPLACE FUNCTION get_item_count(p_color VARCHAR2, p_min_weight VARCHAR2, p_max_weight VARCHAR2)
+RETURN NUMBER
+IS
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count
+    FROM ITEMS
+    WHERE color = p_color
+    AND weight BETWEEN p_min_weight AND p_max_weight;
+    RETURN v_count;
+END;
+/
+
+
+/* Call get_item_count() */
+
+BEGIN
+   DBMS_OUTPUT.PUT_LINE('Number of items with color ''Black'' and weight between 0.1K.g and 2K.g: ' || get_item_count('Black', '0.1kg', '2kg'));
+END;
+/
+
+
+=========================================================================================================================================================
+
+Q.4 Write a procedure to display top five highest paid workers who are specialized in “PAINTING" using table WORKER (workerid, name, wage_per_hour, specialized_in, manager_id)
+
+CREATE OR REPLACE PROCEDURE display_painters IS
+    CURSOR painting_cursor IS
+        SELECT workerid, name, wage_per_hour
+        FROM WORKER
+        WHERE specialized_in = 'Painting'
+        ORDER BY wage_per_hour DESC;
+    v_workerid WORKER.workerid%TYPE;
+    v_name WORKER.name%TYPE;
+    v_wage_per_hour WORKER.wage_per_hour%TYPE;
+BEGIN
+    OPEN painting_cursor;
+    LOOP
+        FETCH painting_cursor INTO v_workerid, v_name, v_wage_per_hour;
+        EXIT WHEN painting_cursor%ROWCOUNT > 5 OR painting_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Worker ID: ' || v_workerid || ', Name: ' || v_name || ', Wage per Hour: ' || v_wage_per_hour);
+    END LOOP;
+    CLOSE painting_cursor;
+END;
+/
+
+/* Call display_painters() */
+
+BEGIN
+    display_painters;
+END;
+/
