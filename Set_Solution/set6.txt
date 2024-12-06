@@ -1,0 +1,55 @@
+/* Create Table Dept1 */
+
+Create Table Dept1(
+ deptno int Primary Key,
+ deptnm varchar2(10)
+);
+
+/* Create Table EMP1 */
+
+Create Table EMP1(
+ empno int Primary Key,
+ empnm varchar2(15),
+ empadd varchar2(25),
+ salary int,
+ date_birth date,
+ joindt date,
+ deptno int
+);
+
+
+ Insert Into EMP1 Values(1,'Jay','Bardoli',20000,'26-JUL-2002','5-DEC-2019',11);
+ Insert Into EMP1 Values(2,'Krish','Surat',15000,'16-MAY-2003','02-JAN-2019',12);
+ Insert Into EMP1 Values(3,'Kevin','Navsari',25000,'12-FEB-2001','22-AUG-2019',11);
+ Insert Into EMP1 Values(4,'Sunil','Mumbai',20000,'11-MAY-2000','14-SEP-2023',13);
+ Insert Into EMP1 Values(5,'Lisa','Vapi',10000,'21-APR-2002','02-NOV-2020',14);
+ Insert Into EMP1 Values(6,'Nancy','Surat',15000,'09-JUN-2002','02-JAN-2019',15);
+
+
+Insert Into Dept1 Values(11,'Accounting');
+Insert Into Dept1 Values(12,'HR');
+Insert Into Dept1 Values(13,'Production');
+Insert Into Dept1 Values(14,'Sales');
+Insert Into Dept1 Values(15,'EDP');
+Insert Into Dept1 Values(16,'TRG');
+
+
+========================================================================================
+
+1.Write a PL/SQL block (table above EMP-DEPT table) which takes as input Department name and 
+    displays all the employees of this department who has been working since last five years.
+
+Declare
+  dept_name varchar2(20);
+Begin
+  dept_name := '&dept_name';
+  for cur in (select e.empnm
+                from emp1 e, dept1 d
+                where e.deptno = d.deptno
+                and d.deptnm = dept_name
+                and months_between(sysdate, e.joindt) > 60)
+  loop
+    DBMS_OUTPUT.PUT_LINE('Name: ' || cur.empnm);
+  end loop;
+End;
+/
