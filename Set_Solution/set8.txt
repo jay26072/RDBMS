@@ -1,0 +1,80 @@
+CREATE TABLE EMPMAST (
+ empno INT PRIMARY KEY,
+ name VARCHAR2(50),
+ pfno VARCHAR2(20),
+ empbasic DECIMAL(10, 2),
+ deptno INT,
+ designation VARCHAR2(50)
+);
+=============================================================================================================
+
+CREATE TABLE DEPT11 (
+ DNO INT PRIMARY KEY,
+ DNAME VARCHAR2(50)
+);
+
+INSERT INTO EMPMAST VALUES(1, 'John Doe', 'PF001', 50000.00, 1, 'Manager');
+INSERT INTO EMPMAST VALUES(2, 'Jane Doe', 'PF002', 40000.00, 2, 'Engineer');
+INSERT INTO EMPMAST VALUES(3, 'Bob Smith', 'PF003', 60000.00, 3, 'Director');
+INSERT INTO EMPMAST VALUES(4, 'Alice Johnson', 'PF004', 45000.00, 2, 'Manager');
+INSERT INTO EMPMAST VALUES(5, 'Mike Brown', 'PF005', 55000.00, 1, 'Engineer');
+INSERT INTO EMPMAST VALUES(6, 'Emma Lee', 'PF006', 35000.00, 3, 'Trainee');
+INSERT INTO EMPMAST VALUES(7, 'Olivia Davis', 'PF007', 48000.00, 2, 'Manager');
+INSERT INTO EMPMAST VALUES(8, 'Noah Hall', 'PF008', 52000.00, 1, 'Engineer');
+INSERT INTO EMPMAST VALUES(9, 'Lily Taylor', 'PF009', 42000.00, 3, 'Manager');
+INSERT INTO EMPMAST VALUES(10, 'Ethan White', 'PF010', 58000.00, 2, 'Director');
+
+
+INSERT INTO DEPT11 VALUES(1, 'Sales');
+INSERT INTO DEPT11 VALUES(2, 'Marketing');
+INSERT INTO DEPT11 VALUES(3, 'HR');
+INSERT INTO DEPT11 VALUES(4, 'IT');
+INSERT INTO DEPT11 VALUES(5, 'Finance');
+INSERT INTO DEPT11 VALUES(6, 'Production');
+INSERT INTO DEPT11 VALUES(7, 'Research');
+INSERT INTO DEPT11 VALUES(8, 'Development');
+INSERT INTO DEPT11 VALUES(9, 'Operations');
+INSERT INTO DEPT11 VALUES(10, 'Management');
+
+
+
+=============================================================================================================
+
+
+DECLARE
+    empid int;
+    v_empno EMPMAST.empno%TYPE;
+    v_name EMPMAST.name%TYPE;
+    v_empbasic EMPMAST.empbasic%TYPE;
+    v_hra NUMBER(10, 2);
+    v_da NUMBER(10, 2);
+    v_medical NUMBER(10, 2) := 100;
+    v_pf NUMBER(10, 2);
+    v_total_salary NUMBER(10, 2);
+    v_designation EMPMAST.designation%TYPE;
+BEGIN
+    empid :=&empid;
+    SELECT empno, name, empbasic, designation INTO v_empno, v_name, v_empbasic, v_designation
+    FROM EMPMAST
+    WHERE empno = empid;
+
+    v_hra := v_empbasic * 0.15;
+    v_da := v_empbasic * 0.50;
+    v_pf := v_empbasic * 0.0833;
+    v_total_salary := v_empbasic + v_hra + v_da + v_medical - v_pf;
+
+    DBMS_OUTPUT.PUT_LINE('---------------------');
+    DBMS_OUTPUT.PUT_LINE('Salary Slip');
+    DBMS_OUTPUT.PUT_LINE('---------------------');
+    DBMS_OUTPUT.PUT_LINE('Employee Number: ' || v_empno);
+    DBMS_OUTPUT.PUT_LINE('Name: ' || v_name);
+    DBMS_OUTPUT.PUT_LINE('Designation: ' || v_designation);
+    DBMS_OUTPUT.PUT_LINE('Basic Salary: ' || v_empbasic);
+    DBMS_OUTPUT.PUT_LINE('HRA: ' || v_hra);
+    DBMS_OUTPUT.PUT_LINE('DA: ' || v_da);
+    DBMS_OUTPUT.PUT_LINE('Medical: ' || v_medical);
+    DBMS_OUTPUT.PUT_LINE('PF: ' || v_pf);
+    DBMS_OUTPUT.PUT_LINE('Total Salary: ' || v_total_salary);
+    DBMS_OUTPUT.PUT_LINE('---------------------');
+END;
+/
