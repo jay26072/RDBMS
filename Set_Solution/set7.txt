@@ -1,0 +1,154 @@
+=======================================
+/* Create Table CUSTOMER */
+
+CREATE TABLE CUSTOMER
+(
+    cid NUMBER PRIMARY KEY,
+    fname VARCHAR2(20),
+    lname VARCHAR2(20),
+    city VARCHAR2(20),
+    country VARCHAR2(20),
+    phone VARCHAR2(15)
+);
+
+=======================================
+/* Create Table ORDERS */
+
+CREATE TABLE ORDERS
+(
+    oid NUMBER PRIMARY KEY,
+    cid NUMBER,
+    oDate DATE,
+    oTotalAmount NUMBER,
+    FOREIGN KEY (cid) REFERENCES CUSTOMER(cid)
+);
+
+=======================================
+
+-- Insert records into CUSTOMER table
+
+INSERT INTO CUSTOMER VALUES(1,'Jay','Patel','Bardoli','India','9875632140');
+INSERT INTO CUSTOMER VALUES(2, 'Jane', 'Smith', 'Los Angeles', 'USA', '0987654321');
+INSERT INTO CUSTOMER VALUES(3, 'Alice', 'Johnson', 'Chicago', 'USA', '8563214790');
+INSERT INTO CUSTOMER VALUES(4, 'Bob', 'Brown', 'Houston', 'USA', '1568247930');
+INSERT INTO CUSTOMER VALUES(5, 'Charlie', 'Davis', 'Phoenix', 'USA', '4567890123');
+INSERT INTO CUSTOMER VALUES(6, 'David', 'Wilson', 'Philadelphia', 'USA', '5678901234');
+INSERT INTO CUSTOMER VALUES(7, 'Eva', 'Martinez', 'San Antonio', 'USA', '6789012345');
+INSERT INTO CUSTOMER VALUES(8, 'Frank', 'Garcia', 'San Diego', 'USA', '7890123456');
+INSERT INTO CUSTOMER VALUES(9, 'Grace', 'Rodriguez', 'Dallas', 'USA', '8901234567');
+INSERT INTO CUSTOMER VALUES(10, 'Hank', 'Lee', 'San Jose', 'USA', '9012345678');
+INSERT INTO CUSTOMER VALUES(11, 'Li', 'Wei', 'Beijing', 'China', '87986321450');
+INSERT INTO CUSTOMER VALUES(12, 'Chen', 'Jie', 'Shanghai', 'China', '2345678901');
+INSERT INTO CUSTOMER VALUES(13, 'Wang', 'Fang', 'Guangzhou', 'China', '3456789012');
+INSERT INTO CUSTOMER VALUES(14, 'Zhang', 'Yan', 'Shenzhen', 'China', '4567890123');
+INSERT INTO CUSTOMER VALUES(15, 'Olivia', 'Taylor', 'New York', 'USA', '0123456789');
+INSERT INTO CUSTOMER VALUES(16, 'Sam', 'Harris', 'Miami', 'USA', '9856321470');
+
+
+ -- ORDERS Table Records --
+
+INSERT INTO ORDERS VALUES(1,1,'08-DEC-2024',5000);
+INSERT INTO ORDERS VALUES(2,5,'12-JUN-2024',6000);
+INSERT INTO ORDERS VALUES(3,2,'25-MAY-2024',2400);
+INSERT INTO ORDERS VALUES(4,12,'14-FEB-2024',4500);
+INSERT INTO ORDERS VALUES(5,3,'05-JUL-2024',8520);
+INSERT INTO ORDERS VALUES(6,4,'01-APR-2023',500);
+INSERT INTO ORDERS VALUES(7,11,'30-SEP-2024',12000);
+INSERT INTO ORDERS VALUES(8,7,'02-MAR-2024',4000);
+INSERT INTO ORDERS VALUES(9,8,'24-AUG-2024',2000);
+INSERT INTO ORDERS VALUES(10,6,'16-OCT-2024',8000);
+INSERT INTO ORDERS VALUES(11,1,'22-JUL-2024',4500);
+INSERT INTO ORDERS VALUES(12,7,'02-FEB-2024',2000);
+INSERT INTO ORDERS VALUES(13,1,'26-JUL-2024',1200);
+
+
+-- 1. List the number of customers in each country. Only include countries with more than 100 customers.
+
+SELECT country, COUNT(*) AS customer_count FROM CUSTOMER
+GROUP BY country HAVING COUNT(*) > 10;
+
+
+
+-- 2. List the number of customers in each country, except China, sorted high to low. Only include countries with 5 or more customers.
+
+SELECT country, COUNT(*) AS customer_count FROM CUSTOMER
+WHERE country <> 'China' 
+GROUP BY country
+HAVING COUNT(*) >= 5
+ORDER BY customer_count DESC;
+
+
+
+-- 3. List all customers with average orders between Rs.5000 and Rs.6500.
+SELECT cid, fname, lname FROM CUSTOMER
+WHERE cid IN ( SELECT cid FROM ORDERS
+    GROUP BY cid
+    HAVING AVG(oTotalAmount) BETWEEN 5000 AND 6500
+);
+
+
+
+-- 4. Create a trigger that executes whenever country is updated in CUSTOMER table.
+
+CREATE OR REPLACE TRIGGER country_update_trigger
+AFTER UPDATE OF country ON CUSTOMER
+FOR EACH ROW
+BEGIN
+    IF :NEW.country != :OLD.country THEN
+        DBMS_OUTPUT.PUT_LINE('Country updated for customer ID: ' || :OLD.cid);
+    END IF;
+END;
+/
+
+
+
+-- 5. Create a function to return customer with maximum orders.
+
+Declaration:
+
+CREATE OR REPLACE FUNCTION get_customer_with_max_orders 
+    RETURN VARCHAR2 IS 
+    customer_name VARCHAR2(100);
+BEGIN
+    SELECT fname || ' ' || lname
+    INTO customer_name
+    FROM CUSTOMER
+    WHERE cid = (
+        SELECT cid
+        FROM (
+            SELECT cid, COUNT(*) AS order_count
+            FROM ORDERS
+            GROUP BY cid
+            ORDER BY order_count DESC
+        )
+        WHERE ROWNUM = 1
+    );
+    RETURN customer_name;
+END;
+
+Function Call:
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(get_customer_with_max_orders);
+END;
+/
+
+
+
+-- 6. Create a procedure to display month names of dates of ORDER table. The month names should be unique.
+
+CREATE PROCEDURE display_unique_month IS
+    CURSOR month_cursor IS
+        SELECT DISTINCT TO_CHAR(oDate, 'Month') AS month_name
+        FROM ORDERS;
+BEGIN
+    FOR month_record IN month_cursor LOOP
+        DBMS_OUTPUT.PUT_LINE('Month: ' || month_record.month_name);
+    END LOOP;
+END;
+
+Call:
+
+BEGIN
+    display_unique_month;
+END;
