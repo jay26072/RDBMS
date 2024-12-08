@@ -1,0 +1,76 @@
+/* Create Table ACCOUNT */
+
+Create Table ACCOUNT(
+    AC_NO NUMBER Primary Key,
+    NAME varchar2(25),
+    AC_TYPE char(5),
+    BALANCE_AMT NUMBER,
+    BALANCE_DATE date
+);
+
+/* Create Table TRANSACTION */
+
+Create Table TRANSACTION(
+    AC_NO NUMBER Primary Key,
+    TRANSACTION_DATE date,
+    TR_TYPE char(5),
+    AMOUNT NUMBER,
+    PREV_BALANCE NUMBER,
+    REMARK varchar2(25),
+    FOREIGN KEY (AC_NO) REFERENCES ACCOUNT(AC_NO)
+    ON DELETE CASCADE
+);
+
+
+-- Insert records into ACCOUNT table
+INSERT INTO ACCOUNT VALUES(1001, 'Jay Patel', 'S', 1500,'26-JUL-2023');
+INSERT INTO ACCOUNT VALUES(1002, 'Jane Smith', 'C', 2500,'22-JAN-2024');
+INSERT INTO ACCOUNT VALUES(1003, 'Alice Johnson', 'S', 3200,'16-MAR-2024');
+INSERT INTO ACCOUNT VALUES(1004, 'Bob Brown', 'C', 4300,'02-APR-2024');
+INSERT INTO ACCOUNT VALUES(1005, 'Charlie Davis', 'S', 2100,'08-DEC-2023');
+INSERT INTO ACCOUNT VALUES(1006, 'David Wilson', 'C', 3700,'22-FEB-2023');
+INSERT INTO ACCOUNT VALUES(1007, 'Eva Martinez', 'S', 1800,'10-SEP-2024');
+INSERT INTO ACCOUNT VALUES(1008, 'Frank Garcia', 'C', 2900,'21-OCT-2024');
+INSERT INTO ACCOUNT VALUES(1009, 'Grace Rodriguez', 'S', 4100,'03-MAR-2024');
+INSERT INTO ACCOUNT VALUES(1010, 'Hank Lee', 'C', 5000,'05-NOV-2023');
+
+
+-- Insert records into TRANSACTION table
+INSERT INTO TRANSACTION VALUES(1001,'12-AUG-2024', 'D', 500, 1000, 'Salary Deposit');
+INSERT INTO TRANSACTION VALUES(1002,'22-SEP-2024', 'W', 300, 2800, 'Utility Bill');
+INSERT INTO TRANSACTION VALUES(1003,'07-DEC-2024', 'D', 700, 2500, 'Freelance Payment');
+INSERT INTO TRANSACTION VALUES(1004,'11-JUL-2024', 'W', 400, 4700, 'Grocery Shopping');
+INSERT INTO TRANSACTION VALUES(1005,'12-FEB-2024', 'D', 600, 1500, 'Gift');
+INSERT INTO TRANSACTION VALUES(1006,'28-APR-2023', 'W', 500, 4200, 'Car Repair');
+INSERT INTO TRANSACTION VALUES(1007,'17-MAR-2024', 'D', 800, 1000, 'Project Bonus');
+INSERT INTO TRANSACTION VALUES(1008,'01-JAN-2024', 'W', 200, 3100, 'Dining Out');
+INSERT INTO TRANSACTION VALUES(1009,'30-NOV-2024', 'D', 900, 3200, 'Investment Return');
+INSERT INTO TRANSACTION VALUES(1010,'04-FEB-2024', 'W', 400, 5400, 'Online Shopping');
+
+
+-- Create a procedure to print transaction details
+
+CREATE OR REPLACE PROCEDURE PrintTransactionDetails(
+    p_from_date IN DATE,
+    p_to_date IN DATE
+) IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(RPAD('Account No', 12) || RPAD('Date', 12) || RPAD('Type', 7) || RPAD('Amount', 12) || RPAD('Prev Balance', 15) || RPAD('Remark', 20));
+    DBMS_OUTPUT.PUT_LINE('--------------------------------------------------------------------------------');
+    FOR rec IN (
+        SELECT * FROM TRANSACTION
+        WHERE TRANSACTION_DATE BETWEEN p_from_date AND p_to_date
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE(RPAD(rec.AC_NO, 12) || RPAD(TO_CHAR(rec.TRANSACTION_DATE, 'DD-MON-YYYY'), 12) || RPAD(rec.TR_TYPE, 7) ||
+        RPAD(TO_CHAR(rec.AMOUNT, '99,999.99'), 12) ||
+        RPAD(TO_CHAR(rec.PREV_BALANCE, '99,999.99'), 15) || RPAD(rec.REMARK, 20));
+    END LOOP;
+END;
+/
+
+-- Call the procedure
+
+BEGIN
+    PrintTransactionDetails(TO_DATE('26-JUL-2023', 'DD-MON-YYYY'), TO_DATE('31-DEC-2024', 'DD-MON-YYYY'));
+END;
+/
