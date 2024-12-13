@@ -1,0 +1,65 @@
+/* Create Table Employee */
+
+CREATE TABLE Employee (
+    eid INT PRIMARY KEY,
+    fname VARCHAR2(50),
+    lname VARCHAR2(50),
+    salary int(10)
+);
+
+
+/* Insert Records */
+
+INSERT INTO Employee VALUES (1,'Jay','Patel',50000);
+INSERT INTO Employee VALUES (2,'Jane','Do',60000);
+INSERT INTO Employee VALUES (3,'Max','Smith',70000);
+INSERT INTO Employee VALUES (4,'Kevin','Parmar',80000);
+INSERT INTO Employee VALUES (5,'Jen','Davis',90000);
+
+==============================================================================================================
+1.
+CREATE OR REPLACE FUNCTION get_total_salary
+    RETURN NUMBER
+    IS
+BEGIN
+    DECLARE
+        total_salary NUMBER := 0;
+        CURSOR c1 IS SELECT salary FROM Employee;
+    BEGIN
+        FOR c IN c1 LOOP
+            total_salary := total_salary + c.salary;
+        END LOOP;
+        RETURN total_salary;
+    END;
+END get_total_salary;
+/
+
+Function Call:
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Total salary paid by company: ' || get_total_salary);
+END;
+
+2.
+/* Modify the function to procedure and display the total paid salary from the procedure itself */
+
+CREATE OR REPLACE PROCEDURE get_total_salary_for_char (p_char VARCHAR2)
+IS
+    total_salary NUMBER := 0;
+    CURSOR c1 (p_char VARCHAR2) IS 
+        SELECT salary FROM Employee
+        WHERE fname LIKE p_char ||'%';
+BEGIN
+    FOR c IN c1(p_char) LOOP
+        total_salary := total_salary + c.salary;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Total salary paid by company for employees whose name starts from ''' || p_char || ''': ' || total_salary);
+END get_total_salary_for_char;
+/
+
+Procedure Call:
+
+BEGIN
+    get_total_salary_for_char('J');
+END;
+
